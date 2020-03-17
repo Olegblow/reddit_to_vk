@@ -1,12 +1,15 @@
+#!/usr/bin/env python
+
 import asyncio
-import aiofiles
-import aiohttp
 import os
 import re
 from typing import List
 
+import aiofiles
+import aiohttp
 
-async def get_data(session, url:str) -> None:
+
+async def get_data(session, url: str) -> None:
     """Получаем данные от сервера и получаем ссылки для скачивания картинок."""
     print('start init', url, '\n')
     async with session.get(url) as response:
@@ -24,7 +27,7 @@ async def get_data(session, url:str) -> None:
                 tasks.append(save_img(session, img_url, img_path))
         # Отправляем задачи на скачивание и сохранение картинок.
         await asyncio.gather(*tasks)
-                                
+
 
 async def save_img(session, img_url: str, img_path: str) -> None:
     """Скачивает картинку и сохраняем ее на диск."""
@@ -41,16 +44,16 @@ async def main(urls: List) -> None:
     async with aiohttp.ClientSession() as session:
         tasks = [get_data(session, url) for url in urls]
         await asyncio.gather(*tasks)
-        
+
 
 def start_download() -> None:
+    """Функция старта загрузки изображений."""
     # удаление всех файлов из папки img
-    for file in os.listdir('img/'):        
+    for file in os.listdir('img/'):
         os.remove(os.path.join('img/', file))
     # url for download count=20
     url_doomer = 'https://www.reddit.com/r/Doomers/top/.json?count=20'
     url_wojak = 'https://www.reddit.com/r/Wojak/top/.json?count=20'
     game_meme = 'https://www.reddit.com/r/gamingmemes/top/.json?count=20'
-    URLS = [url_doomer, url_wojak, game_meme]
-
-    asyncio.run(main(URLS))
+    urls = [url_doomer, url_wojak, game_meme]
+    asyncio.run(main(urls))

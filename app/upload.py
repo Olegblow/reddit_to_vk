@@ -1,11 +1,13 @@
-import os
-import vk_api
-from typing import List
-from celery import shared_task
 import datetime
+import os
+from typing import List
+
+import vk_api
+from celery import shared_task
 
 
-# vk 
+# vk
+# -----------------------------------------
 ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', '')
 GROUP_ID = '-178535034'
 MESSAGE = '#meme #game #reddit #bot'
@@ -18,13 +20,13 @@ def start_upload() -> None:
     img_list = get_img_list(path)
     img_count = len(img_list)
     # 2. считаем делей. для каждой картинки
-    delta = 18/img_count
+    delta = 18 / img_count
     hour = int(delta)
-    minute = (int(delta*100%100) * 6)/100
+    minute = (int(delta * 100 % 100) * 6) / 100
     # 3. Запускаю цикл отправки изображений на стену.
     now = datetime.datetime.now()
-    delta = datetime.timedelta(seconds=(hour*3600 + minute*60))
-    for img  in img_list:
+    delta = datetime.timedelta(seconds=(hour * 3600 + minute * 60))
+    for img in img_list:
         upload_task.apply_async(
             eta=now,
             kwargs={'img': img, 'path': path}
@@ -38,13 +40,13 @@ def get_img_list(path: str) -> List:
 
 
 @shared_task
-def upload_task(img:str, path: str) -> None:
+def upload_task(img: str, path: str) -> None:
     """Таск загрузки изображений на стену в группы в вк."""
     vk_session = vk_api.VkApi(token=ACCESS_TOKEN)
     upload = vk_api.VkUpload(vk_session)
-    img_path=os.path.join(path, img)
-    uploaded_img = upload.photo_wall(	
-            photos=img_path
+    img_path = os.path.join(path, img)
+    uploaded_img = upload.photo_wall(
+        photos=img_path
     )
     attachment = ','.join('photo{owner_id}_{id}'.format(**item) for item in uploaded_img)
     vk_session.method("wall.post", {

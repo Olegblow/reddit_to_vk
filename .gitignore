@@ -1,4 +1,4 @@
-#gitignore
+    #gitignore
 
 /.idea/
 /.vscode/
@@ -7,8 +7,11 @@
 /venv_/
 .venv/
 /env/
+.tox/
 
 app/img/
+*egg-info/
+
 
 .env
 *.pyc
