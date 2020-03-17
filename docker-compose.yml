@@ -1,0 +1,30 @@
+version:  '3.7'
+
+
+services:
+    rabbitmq:
+        restart: always
+        image: rabbitmq:3.8.2
+        expose:
+          - '5672'
+        volumes:
+          - rabbitmq:/var/lib/rabbitmq
+        env_file:
+          - .env
+
+    celery:
+        restart: always
+        build: .
+        volumes: 
+            - ./app:/app
+        depends_on:
+            - rabbitmq
+        env_file:
+            - .env        
+        privileged: true
+        command: bash -c  'celery -A main worker --workdir app -l info -B'
+
+    
+
+volumes:
+    rabbitmq:

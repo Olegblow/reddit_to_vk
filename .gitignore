@@ -1,0 +1,17 @@
+#gitignore
+
+/.idea/
+/.vscode/
+
+/venv/
+/venv_/
+.venv/
+/env/
+
+app/img/
+
+.env
+*.pyc
+*.rar
+*.pdf
+app/celerybeat-schedule
